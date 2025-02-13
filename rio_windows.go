@@ -12,7 +12,7 @@ type IOCPSettings struct {
 // 设置 IOCP
 func WithIOCPSettings(settings IOCPSettings) StartupOption {
 	return func(o *StartupOptions) error {
-		o.AIOOptions.Settings = settings
+		o.AIOOptions.Settings = settings.IOCPSettings
 		return nil
 	}
 }

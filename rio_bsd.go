@@ -15,7 +15,7 @@ type KqueueSettings struct {
 // 设置 Kqueue。
 func WithKqueueSettings(settings KqueueSettings) StartupOption {
 	return func(o *StartupOptions) error {
-		o.AIOOptions.Settings = settings
+		o.AIOOptions.Settings = settings.KqueueSettings
 		return nil
 	}
 }
@@ -29,13 +29,11 @@ func WithSampleKqueueSettings(changeQueueSize int) StartupOption {
 		if changeQueueSize < 1 {
 			changeQueueSize = 16384
 		}
-		o.AIOOptions.Settings = KqueueSettings{
-			aio.KqueueSettings{
-				ChangesQueueSize:     changeQueueSize,
-				ChangesPeekBatchSize: changeQueueSize,
-				EventsWaitBatchSize:  changeQueueSize,
-				EventsWaitTimeout:    time.Millisecond,
-			},
+		o.AIOOptions.Settings = aio.KqueueSettings{
+			ChangesQueueSize:     changeQueueSize,
+			ChangesPeekBatchSize: changeQueueSize,
+			EventsWaitBatchSize:  changeQueueSize,
+			EventsWaitTimeout:    time.Millisecond,
 		}
 		return nil
 	}

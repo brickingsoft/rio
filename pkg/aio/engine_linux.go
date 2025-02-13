@@ -68,7 +68,7 @@ func (engine *Engine) Start() {
 
 	// settings
 	settings := ResolveSettings[IOURingSettings](engine.settings)
-	// default setting
+	//default setting
 	if settings.Param.Flags == 0 {
 		if compareKernelVersion(major, minor, 5, 11) >= 0 {
 			engine.cylindersLockOSThread = true
@@ -304,6 +304,7 @@ func (cylinder *IOURingCylinder) Loop() {
 				}
 				// complete
 				completion(result, op, err)
+				runtime.KeepAlive(op)
 			}
 		}
 		cylinder.advance(peeked)
@@ -442,10 +443,10 @@ func (ring *IOURing) GetSQE() (sqe *SubmissionQueueEntry) {
 				uintptr((sq.sqeTail&*sq.ringMask)<<shift)*unsafe.Sizeof(SubmissionQueueEntry{})),
 		)
 		sq.sqeTail = next
-
+		runtime.KeepAlive(sq)
 		return
 	}
-
+	runtime.KeepAlive(sq)
 	return
 }
 
@@ -499,7 +500,7 @@ func (ring *IOURing) SubmitAndWaitTimeout(waitNr uint32, ts *syscall.Timespec, s
 				sigMaskSz: enter2size,
 				ts:        uint64(uintptr(unsafe.Pointer(ts))),
 			}
-			data := getData{
+			data := &getData{
 				submit:   ring.flushSQ(),
 				waitNr:   waitNr,
 				getFlags: EnterExtArg,
@@ -508,7 +509,7 @@ func (ring *IOURing) SubmitAndWaitTimeout(waitNr uint32, ts *syscall.Timespec, s
 				arg:      unsafe.Pointer(&arg),
 			}
 
-			cqe, err = ring.privateGetCQE(&data)
+			cqe, err = ring.privateGetCQE(data)
 			runtime.KeepAlive(data)
 			return
 		}
@@ -920,6 +921,7 @@ func (ring *IOURing) privateGetCQE(data *getData) (cqe *CompletionQueueEvent, er
 			err = localErr
 		}
 	}
+	runtime.KeepAlive(data)
 	return
 }
 
@@ -1003,9 +1005,10 @@ func (ring *IOURing) Enter(submitted uint32, waitNr uint32, flags uint32, sig un
 }
 
 func (ring *IOURing) Enter2(submitted uint32, waitNr uint32, flags uint32, sig unsafe.Pointer, size int) (uint, error) {
+	fd := ring.enterFd
 	consumed, _, errno := syscall.Syscall6(
 		sysEnter,
-		uintptr(ring.enterFd),
+		uintptr(fd),
 		uintptr(submitted),
 		uintptr(waitNr),
 		uintptr(flags),

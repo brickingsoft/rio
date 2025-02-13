@@ -12,7 +12,7 @@ type IOURingSettings struct {
 // 设置 IOURing。
 func WithIOURingSettings(settings IOURingSettings) StartupOption {
 	return func(o *StartupOptions) error {
-		o.AIOOptions.Settings = settings
+		o.AIOOptions.Settings = settings.IOURingSettings
 		return nil
 	}
 }
@@ -31,15 +31,14 @@ func WithIOURingSettings(settings IOURingSettings) StartupOption {
 // features 的默认值为  aio.FeatSingleMMap | aio.FeatSubmitStable | aio.FeatExtArg |  aio.FeatFastPoll |  aio.FeatSQPollNonfixed |  aio.FeatNativeWorkers。
 func WithSampleIOURingSettings(entries uint32, flags uint32, features uint32) StartupOption {
 	return func(o *StartupOptions) error {
-		o.AIOOptions.Settings = IOURingSettings{
+		o.AIOOptions.Settings =
 			aio.IOURingSettings{
 				Entries: entries,
 				Param: aio.IOURingSetupParam{
 					Flags:    flags,
 					Features: features,
 				},
-			},
-		}
+			}
 		return nil
 	}
 }

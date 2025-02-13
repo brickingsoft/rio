@@ -126,8 +126,8 @@ func allocateBuffer(size int) (b []byte, err error) {
 	_ = syscall.Close(fd)
 
 	bptr := (*byte)(unsafe.Pointer(vaddr))
-	b = unsafe.Slice(bptr, size)
-
+	b = unsafe.Slice(bptr, doubleSize(size))
+	runtime.KeepAlive(vaddr)
 	return
 }
 

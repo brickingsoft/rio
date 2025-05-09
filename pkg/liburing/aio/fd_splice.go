@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"golang.org/x/sys/unix"
+	"runtime"
 	"strconv"
 	"syscall"
 )
@@ -99,5 +100,6 @@ func (fd *Fd) Splice(src *Fd, remain int64) (n int64, err error) {
 			err = pumpedErr
 		}
 	}
+	runtime.KeepAlive(src)
 	return
 }

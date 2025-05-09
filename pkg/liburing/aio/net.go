@@ -389,14 +389,14 @@ func (fd *NetFd) SetTCPDeferAccept(ok bool) error {
 	return nil
 }
 
-func (fd *NetFd) SetReusePort(reusePort int) error {
+func (fd *NetFd) SetReusePort(ok bool) error {
 	if fd.family == syscall.AF_INET || fd.family == syscall.AF_INET6 {
 		if fd.Installed() {
-			if err := syscall.SetsockoptInt(fd.regular, syscall.SOL_SOCKET, unix.SO_REUSEPORT, reusePort); err != nil {
+			if err := syscall.SetsockoptInt(fd.regular, syscall.SOL_SOCKET, unix.SO_REUSEPORT, boolint(ok)); err != nil {
 				return os.NewSyscallError("setsockopt", err)
 			}
 		} else {
-			return fd.SetSocketoptInt(syscall.SOL_SOCKET, unix.SO_REUSEPORT, reusePort)
+			return fd.SetSocketoptInt(syscall.SOL_SOCKET, unix.SO_REUSEPORT, boolint(ok))
 		}
 	}
 	return nil

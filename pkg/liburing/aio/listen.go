@@ -8,7 +8,6 @@ import (
 	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"net"
 	"reflect"
-	"runtime"
 	"strings"
 	"sync"
 	"syscall"
@@ -92,6 +91,23 @@ func Listen(ctx context.Context, network string, proto int, addr net.Addr, reuse
 		},
 	}
 	if family == syscall.AF_INET || family == syscall.AF_INET6 {
+		// reuse addr
+		if err = ln.SetReuseAddr(true); err != nil {
+			_ = ln.Close()
+			return
+		}
+		// reuse port
+		if reusePort && addrPort > 0 {
+			if err = ln.SetReusePort(true); err != nil {
+				_ = ln.Close()
+				return
+			}
+			// todo: fix cbpf enabled will disable reuse port
+			//if err = ln.SetCBPF(runtime.NumCPU()); err != nil {
+			//	_ = ln.Close()
+			//	return
+			//}
+		}
 		// ipv6
 		if ipv6only {
 			if err = ln.SetIpv6only(true); err != nil {
@@ -104,11 +120,6 @@ func Listen(ctx context.Context, network string, proto int, addr net.Addr, reuse
 			_ = ln.Close()
 			return
 		}
-		// reuse addr
-		if err = ln.SetReuseAddr(true); err != nil {
-			_ = ln.Close()
-			return
-		}
 		// tcp defer acceptOneshot
 		if tcpDeferAccept {
 			if err = ln.SetTCPDeferAccept(true); err != nil {
@@ -116,17 +127,7 @@ func Listen(ctx context.Context, network string, proto int, addr net.Addr, reuse
 				return
 			}
 		}
-		// reuse port
-		if reusePort && addrPort > 0 {
-			if err = ln.SetReusePort(addrPort); err != nil {
-				_ = ln.Close()
-				return
-			}
-			if err = ln.SetCBPF(runtime.NumCPU()); err != nil {
-				_ = ln.Close()
-				return
-			}
-		}
+
 	}
 	// control
 	if control != nil {
@@ -234,6 +235,23 @@ func ListenPacket(ctx context.Context, network string, proto int, addr net.Addr,
 		},
 	}
 	if family == syscall.AF_INET || family == syscall.AF_INET6 {
+		// reuse addr
+		if err = conn.SetReuseAddr(true); err != nil {
+			_ = conn.Close()
+			return
+		}
+		// reuse port
+		if reusePort && addrPort > 0 {
+			if err = conn.SetReusePort(true); err != nil {
+				_ = conn.Close()
+				return
+			}
+			// todo: fix cbpf enabled will disable reuse port
+			//if err = conn.SetCBPF(runtime.NumCPU()); err != nil {
+			//	_ = conn.Close()
+			//	return
+			//}
+		}
 		// ipv6
 		if ipv6only {
 			if err = conn.SetIpv6only(true); err != nil {
@@ -246,27 +264,12 @@ func ListenPacket(ctx context.Context, network string, proto int, addr net.Addr,
 			_ = conn.Close()
 			return
 		}
-		// reuse addr
-		if err = conn.SetReuseAddr(true); err != nil {
-			_ = conn.Close()
-			return
-		}
 		//  broadcast
 		if err = conn.SetBroadcast(true); err != nil {
 			_ = conn.Close()
 			return
 		}
-		// reuse port
-		if reusePort && addrPort > 0 {
-			if err = conn.SetReusePort(addrPort); err != nil {
-				_ = conn.Close()
-				return
-			}
-			if err = conn.SetCBPF(runtime.NumCPU()); err != nil {
-				_ = conn.Close()
-				return
-			}
-		}
+
 		// multicast
 		if ifi != nil {
 			udpAddr, ok := addr.(*net.UDPAddr)

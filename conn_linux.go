@@ -16,6 +16,14 @@ type conn struct {
 	fd *aio.Conn
 }
 
+// Fd implements the rio.Conn Fd method.
+func (c *conn) Fd() (*aio.NetFd, error) {
+	if !c.ok() {
+		return nil, syscall.EINVAL
+	}
+	return &c.fd.NetFd, nil
+}
+
 // Read implements the net.Conn Read method.
 func (c *conn) Read(b []byte) (n int, err error) {
 	if !c.ok() {

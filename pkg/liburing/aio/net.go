@@ -57,6 +57,10 @@ func (fd *NetFd) Name() string {
 	return fmt.Sprintf("[kind:%s][network:%s][laddr:%s][raddr:%s]%s", fd.kind.String(), fd.net, ls, rs, name)
 }
 
+func (fd *NetFd) Kind() NetFdKind {
+	return fd.kind
+}
+
 func (fd *NetFd) Family() int {
 	return fd.family
 }

@@ -20,9 +20,9 @@ func AddrToSockaddr(a net.Addr) (sa syscall.Sockaddr, err error) {
 		addr := a.(*net.TCPAddr)
 		if len(addr.IP) == 0 {
 			ipBytes = net.IPv6zero
-			break
+		} else {
+			ipBytes = addr.IP
 		}
-		ipBytes = addr.IP
 		port = addr.Port
 		zone = addr.Zone
 		break
@@ -30,9 +30,9 @@ func AddrToSockaddr(a net.Addr) (sa syscall.Sockaddr, err error) {
 		addr := a.(*net.UDPAddr)
 		if len(addr.IP) == 0 {
 			ipBytes = net.IPv6zero
-			break
+		} else {
+			ipBytes = addr.IP
 		}
-		ipBytes = addr.IP
 		port = addr.Port
 		zone = addr.Zone
 		break
@@ -46,9 +46,9 @@ func AddrToSockaddr(a net.Addr) (sa syscall.Sockaddr, err error) {
 		addr := a.(*net.IPAddr)
 		if len(addr.IP) == 0 {
 			ipBytes = net.IPv6zero
-			break
+		} else {
+			ipBytes = addr.IP
 		}
-		ipBytes = addr.IP
 		zone = addr.Zone
 		break
 	default:

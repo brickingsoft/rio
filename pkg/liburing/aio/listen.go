@@ -35,6 +35,13 @@ func Listen(ctx context.Context, network string, proto int, addr net.Addr, reuse
 		sotype = syscall.SOCK_STREAM
 		tcpDeferAccept = true
 		tcpAddr := addr.(*net.TCPAddr)
+		if tcpAddr.IP == nil {
+			if network == "tcp" || network == "tcp6" {
+				tcpAddr.IP = net.IPv6zero
+			} else {
+				tcpAddr.IP = net.IPv4zero
+			}
+		}
 		addrPort = tcpAddr.Port
 		break
 	case "unix":
@@ -185,6 +192,12 @@ func ListenPacket(ctx context.Context, network string, proto int, addr net.Addr,
 				localUdpAddr.IP = net.IPv4zero.To4()
 			}
 			addr = &localUdpAddr
+		} else if udpAddr.IP == nil {
+			if network == "udp" || network == "udp6" {
+				udpAddr.IP = net.IPv6zero
+			} else {
+				udpAddr.IP = net.IPv4zero
+			}
 		}
 		break
 	case "unixgram":

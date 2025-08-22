@@ -12,107 +12,75 @@ import (
 )
 
 func AddrToSockaddr(a net.Addr) (sa syscall.Sockaddr, err error) {
-	switch addr := a.(type) {
-	case *net.TCPAddr:
-		if addr.AddrPort().Addr().Is4In6() {
-			addr.IP = addr.IP.To4()
+	var ipBytes []byte
+	var port int
+	var zone string
+	switch a.Network() {
+	case "tcp":
+		addr := a.(*net.TCPAddr)
+		if len(addr.IP) == 0 {
+			ipBytes = net.IPv6zero
+			break
 		}
-		switch len(addr.IP) {
-		case net.IPv4len:
-			sa4 := &syscall.SockaddrInet4{
-				Port: addr.Port,
-				Addr: [4]byte{},
-			}
-			copy(sa4.Addr[:], addr.IP.To4())
-			sa = sa4
-			return
-		case net.IPv6len:
-			zoneId := uint32(0)
-			if ifi, ifiErr := net.InterfaceByName(addr.Zone); ifiErr == nil {
-				zoneId = uint32(ifi.Index)
-			}
-			sa6 := &syscall.SockaddrInet6{
-				Port:   addr.Port,
-				Addr:   [16]byte{},
-				ZoneId: zoneId,
-			}
-			copy(sa6.Addr[:], addr.IP.To16())
-			sa = sa6
-			return
-		default:
-			err = errors.New("ip is invalid")
-			return
+		ipBytes = addr.IP
+		port = addr.Port
+		zone = addr.Zone
+		break
+	case "udp":
+		addr := a.(*net.UDPAddr)
+		if len(addr.IP) == 0 {
+			ipBytes = net.IPv6zero
+			break
 		}
-	case *net.UDPAddr:
-		if addr.AddrPort().Addr().Is4In6() {
-			addr.IP = addr.IP.To4()
-		}
-		switch len(addr.IP) {
-		case net.IPv4len:
-			sa4 := &syscall.SockaddrInet4{
-				Port: addr.Port,
-				Addr: [4]byte{},
-			}
-			copy(sa4.Addr[:], addr.IP)
-			sa = sa4
-			return
-		case net.IPv6len:
-			zoneId := uint32(0)
-			if ifi, ifiErr := net.InterfaceByName(addr.Zone); ifiErr == nil {
-				zoneId = uint32(ifi.Index)
-			}
-			sa6 := &syscall.SockaddrInet6{
-				Port:   addr.Port,
-				Addr:   [16]byte{},
-				ZoneId: zoneId,
-			}
-			copy(sa6.Addr[:], addr.IP)
-			sa = sa6
-			return
-		default:
-			err = errors.New("ip is invalid")
-			return
-		}
-	case *net.IPAddr:
-		ipLen := len(addr.IP)
-		if ipLen == net.IPv6len && isZeros(addr.IP[0:10]) && addr.IP[10] == 0xff && addr.IP[11] == 0xff {
-			addr.IP = addr.IP.To4()
-		}
-		switch ipLen {
-		case net.IPv4len:
-			sa4 := &syscall.SockaddrInet4{
-				Port: 0,
-				Addr: [4]byte{},
-			}
-			copy(sa4.Addr[:], addr.IP)
-			sa = sa4
-			return
-		case net.IPv6len:
-			zoneId := uint32(0)
-			if ifi, ifiErr := net.InterfaceByName(addr.Zone); ifiErr == nil {
-				zoneId = uint32(ifi.Index)
-			}
-			sa6 := &syscall.SockaddrInet6{
-				Port:   0,
-				Addr:   [16]byte{},
-				ZoneId: zoneId,
-			}
-			copy(sa6.Addr[:], addr.IP)
-			sa = sa6
-			return
-		default:
-			err = errors.New("ip is invalid")
-			return
-		}
-	case *net.UnixAddr:
+		ipBytes = addr.IP
+		port = addr.Port
+		zone = addr.Zone
+		break
+	case "unix", "unixgram", "unixpacket":
+		addr := a.(*net.UnixAddr)
 		sa = &syscall.SockaddrUnix{
 			Name: addr.Name,
 		}
 		return
+	case "ip":
+		addr := a.(*net.IPAddr)
+		if len(addr.IP) == 0 {
+			ipBytes = net.IPv6zero
+			break
+		}
+		ipBytes = addr.IP
+		zone = addr.Zone
+		break
 	default:
-		err = errors.New("type of addr is invalid")
+		err = errors.New("invalid addr")
 		return
 	}
+	ip, ok := netip.AddrFromSlice(ipBytes)
+	if !ok {
+		err = errors.New("invalid IP")
+		return
+	}
+	if ip.Is6() {
+		zoneId := uint32(0)
+		if zone != "" {
+			if ifi, ifiErr := net.InterfaceByName(zone); ifiErr == nil {
+				zoneId = uint32(ifi.Index)
+			}
+		}
+		sa6 := &syscall.SockaddrInet6{
+			Port:   port,
+			Addr:   ip.As16(),
+			ZoneId: zoneId,
+		}
+		sa = sa6
+	} else {
+		sa4 := &syscall.SockaddrInet4{
+			Port: port,
+			Addr: ip.As4(),
+		}
+		sa = sa4
+	}
+	return
 }
 
 func SockaddrToAddr(network string, sa syscall.Sockaddr) (addr net.Addr) {

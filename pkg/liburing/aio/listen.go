@@ -5,13 +5,14 @@ package aio
 import (
 	"context"
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"net"
 	"reflect"
 	"strings"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 type Control func(ctx context.Context, network string, address string, raw syscall.RawConn) error

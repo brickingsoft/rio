@@ -5,10 +5,11 @@ package rio
 import (
 	"context"
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing/aio"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"net"
 	"time"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio"
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 func (d *Dialer) dial(ctx context.Context, network string, laddr, raddr net.Addr) (c net.Conn, err error) {

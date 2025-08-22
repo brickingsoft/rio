@@ -4,10 +4,11 @@ package aio
 
 import (
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"io"
 	"net"
 	"syscall"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 func (c *Conn) Receive(b []byte) (n int, err error) {

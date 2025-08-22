@@ -3,10 +3,11 @@
 package sys
 
 import (
-	"golang.org/x/net/bpf"
-	"golang.org/x/sys/unix"
 	"os"
 	"unsafe"
+
+	"golang.org/x/net/bpf"
+	"golang.org/x/sys/unix"
 )
 
 const (

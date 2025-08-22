@@ -3,11 +3,12 @@
 package liburing
 
 import (
-	"golang.org/x/sys/unix"
 	"sync/atomic"
 	"syscall"
 	"time"
 	"unsafe"
+
+	"golang.org/x/sys/unix"
 )
 
 type GetEventsArg struct {

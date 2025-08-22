@@ -4,11 +4,12 @@ package liburing
 
 import (
 	"fmt"
-	"golang.org/x/sys/unix"
 	"os"
 	"runtime"
 	"syscall"
 	"unsafe"
+
+	"golang.org/x/sys/unix"
 )
 
 const (

@@ -3,10 +3,11 @@
 package aio
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"sync"
 	"time"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 var (

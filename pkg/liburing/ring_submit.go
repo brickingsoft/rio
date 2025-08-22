@@ -3,10 +3,11 @@
 package liburing
 
 import (
-	"golang.org/x/sys/unix"
 	"syscall"
 	"time"
 	"unsafe"
+
+	"golang.org/x/sys/unix"
 )
 
 func (ring *Ring) Submit() (uint, error) {

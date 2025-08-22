@@ -3,10 +3,11 @@
 package aio
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"runtime"
 	"sync"
 	"sync/atomic"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 func newWakeup() (v *Wakeup, err error) {

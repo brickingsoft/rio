@@ -4,10 +4,11 @@ package sys
 
 import (
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing"
-	"golang.org/x/sys/unix"
 	"sync"
 	"syscall"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
+	"golang.org/x/sys/unix"
 )
 
 const (

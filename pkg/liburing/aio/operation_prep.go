@@ -4,10 +4,11 @@ package aio
 
 import (
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"syscall"
 	"time"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 func (op *Operation) PrepareNop() {

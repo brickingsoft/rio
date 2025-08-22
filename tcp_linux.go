@@ -5,13 +5,14 @@ package rio
 import (
 	"context"
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing/aio"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"io"
 	"net"
 	"os"
 	"syscall"
 	"time"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio"
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 // ListenTCP acts like [Listen] for TCP networks.

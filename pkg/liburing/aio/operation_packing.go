@@ -4,6 +4,7 @@ package aio
 
 import (
 	"errors"
+
 	"github.com/brickingsoft/rio/pkg/liburing"
 )
 

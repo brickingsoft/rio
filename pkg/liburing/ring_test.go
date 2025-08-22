@@ -3,11 +3,12 @@
 package liburing_test
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"syscall"
 	"testing"
 	"time"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 func TestNew(t *testing.T) {

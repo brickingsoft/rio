@@ -3,12 +3,13 @@
 package aio
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"sync"
 	"syscall"
 	"time"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 func newMultishotAcceptor(ln *Listener) (acceptor *MultishotAcceptor) {

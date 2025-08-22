@@ -3,10 +3,11 @@
 package aio
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"io"
 	"time"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 type BufferAndRing struct {

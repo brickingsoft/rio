@@ -4,15 +4,16 @@ package aio
 
 import (
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/bytebuffer"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"io"
 	"net"
 	"sync"
 	"syscall"
 	"time"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
+	"github.com/brickingsoft/rio/pkg/liburing/aio/bytebuffer"
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 type MultishotReceiveAdaptor struct {

@@ -5,9 +5,10 @@ package liburing
 import (
 	"bytes"
 	"fmt"
-	"golang.org/x/sys/unix"
 	"strings"
 	"sync"
+
+	"golang.org/x/sys/unix"
 )
 
 type Version struct {

@@ -3,10 +3,11 @@
 package liburing_test
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"syscall"
 	"testing"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 func TestSubmissionQueueEntry_PrepareProvideBuffers(t *testing.T) {

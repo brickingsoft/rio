@@ -3,8 +3,9 @@
 package sys
 
 import (
-	"golang.org/x/sys/unix"
 	"runtime"
+
+	"golang.org/x/sys/unix"
 )
 
 // MaskCPU 屏蔽CPU

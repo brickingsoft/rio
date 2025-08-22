@@ -5,11 +5,12 @@ package liburing
 import (
 	"bytes"
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing/bytex"
 	"math/bits"
 	"os"
 	"syscall"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing/bytex"
 )
 
 const (

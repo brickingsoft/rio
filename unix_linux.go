@@ -5,14 +5,15 @@ package rio
 import (
 	"context"
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing/aio"
-	"golang.org/x/sys/unix"
 	"net"
 	"os"
 	"reflect"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio"
+	"golang.org/x/sys/unix"
 )
 
 // ListenUnix acts like [Listen] for Unix networks.

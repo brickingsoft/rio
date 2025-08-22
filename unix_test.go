@@ -2,12 +2,13 @@ package rio_test
 
 import (
 	"fmt"
-	"github.com/brickingsoft/rio"
 	"net"
 	"os"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/brickingsoft/rio"
 )
 
 func TestUnix(t *testing.T) {

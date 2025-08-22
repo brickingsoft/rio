@@ -4,8 +4,9 @@ package process
 
 import (
 	"errors"
-	"golang.org/x/sys/unix"
 	"os"
+
+	"golang.org/x/sys/unix"
 )
 
 func SetCurrentProcessPriority(level PriorityLevel) (err error) {

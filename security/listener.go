@@ -3,8 +3,9 @@ package security
 import (
 	"crypto/tls"
 	"errors"
-	"github.com/brickingsoft/rio"
 	"net"
+
+	"github.com/brickingsoft/rio"
 )
 
 func NewListener(inner net.Listener, config *tls.Config) net.Listener {

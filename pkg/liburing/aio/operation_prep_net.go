@@ -3,9 +3,10 @@
 package aio
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"syscall"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 func (op *Operation) PrepareConnect(conn *Conn, addr *syscall.RawSockaddrAny, addrLen int) {

@@ -2,9 +2,10 @@ package queue_test
 
 import (
 	"fmt"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/queue"
 	"sync"
 	"testing"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio/queue"
 )
 
 type QueueEntry struct {

@@ -3,10 +3,11 @@
 package liburing
 
 import (
-	"golang.org/x/sys/unix"
 	"math"
 	"syscall"
 	"unsafe"
+
+	"golang.org/x/sys/unix"
 )
 
 const (

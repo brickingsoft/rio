@@ -2,11 +2,12 @@ package rio_test
 
 import (
 	"errors"
-	"github.com/brickingsoft/rio"
 	"net"
 	"strconv"
 	"sync"
 	"testing"
+
+	"github.com/brickingsoft/rio"
 )
 
 func TestUDP(t *testing.T) {

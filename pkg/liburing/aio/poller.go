@@ -5,8 +5,6 @@ package aio
 import (
 	"context"
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"math"
 	"os"
 	"runtime"
@@ -15,6 +13,9 @@ import (
 	"syscall"
 	"time"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 var (

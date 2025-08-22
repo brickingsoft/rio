@@ -4,11 +4,12 @@ package aio
 
 import (
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
-	"golang.org/x/sys/unix"
 	"io"
 	"os"
 	"syscall"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
+	"golang.org/x/sys/unix"
 )
 
 const (

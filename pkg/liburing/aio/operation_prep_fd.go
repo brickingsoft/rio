@@ -4,9 +4,10 @@ package aio
 
 import (
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"syscall"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 func (op *Operation) PrepareClose(fd int) {

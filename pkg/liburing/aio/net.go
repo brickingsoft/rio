@@ -4,14 +4,15 @@ package aio
 
 import (
 	"fmt"
-	"github.com/brickingsoft/rio/pkg/liburing"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
-	"golang.org/x/sys/unix"
 	"net"
 	"os"
 	"syscall"
 	"time"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
+	"golang.org/x/sys/unix"
 )
 
 const (

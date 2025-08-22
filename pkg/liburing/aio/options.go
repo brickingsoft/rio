@@ -2,10 +2,11 @@ package aio
 
 import (
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"math"
 	"os"
 	"time"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 var (

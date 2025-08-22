@@ -3,9 +3,10 @@
 package aio
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"syscall"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 func (op *Operation) PrepareSocket(family int, sotype int, proto int) {

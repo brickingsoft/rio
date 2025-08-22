@@ -5,12 +5,13 @@ package rio
 import (
 	"context"
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing/aio"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"net"
 	"net/netip"
 	"reflect"
 	"syscall"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio"
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 // ListenUDP acts like [ListenPacket] for UDP networks.

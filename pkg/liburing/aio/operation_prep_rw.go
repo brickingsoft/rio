@@ -3,8 +3,9 @@
 package aio
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 func (op *Operation) PrepareRead(fd *Fd, b []byte) {

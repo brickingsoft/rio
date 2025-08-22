@@ -3,9 +3,10 @@
 package aio
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"syscall"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 func (op *Operation) PrepareProvideBuffers(bgid int, buffers []syscall.Iovec) {

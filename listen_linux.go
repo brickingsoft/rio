@@ -4,8 +4,9 @@ package rio
 
 import (
 	"context"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"net"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 // Listen announces on the local network address.

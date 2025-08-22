@@ -3,8 +3,9 @@
 package aio
 
 import (
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"net"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 func (c *Conn) Send(b []byte) (n int, err error) {

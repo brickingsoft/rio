@@ -5,12 +5,13 @@ package liburing_test
 import (
 	"bytes"
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"strconv"
 	"sync"
 	"syscall"
 	"testing"
 	"unsafe"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 func TestRing_SetupBufRing2(t *testing.T) {

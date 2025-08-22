@@ -5,10 +5,11 @@ package aio
 import (
 	"errors"
 	"fmt"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 const maxRW = 1 << 30

@@ -6,13 +6,14 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
-	"github.com/brickingsoft/rio"
 	"io"
 	"net"
 	"os"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/brickingsoft/rio"
 )
 
 func TestTCP(t *testing.T) {

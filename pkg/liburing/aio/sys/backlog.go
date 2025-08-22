@@ -4,11 +4,12 @@ package sys
 
 import (
 	"bufio"
-	"github.com/brickingsoft/rio/pkg/liburing"
 	"os"
 	"strings"
 	"sync"
 	"syscall"
+
+	"github.com/brickingsoft/rio/pkg/liburing"
 )
 
 var (

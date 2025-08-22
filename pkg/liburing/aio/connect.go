@@ -5,12 +5,13 @@ package aio
 import (
 	"context"
 	"errors"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 	"net"
 	"reflect"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
 func Connect(

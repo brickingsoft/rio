@@ -3,10 +3,11 @@ package security
 import (
 	"context"
 	"crypto/tls"
-	"github.com/brickingsoft/rio"
 	"net"
 	"strings"
 	"time"
+
+	"github.com/brickingsoft/rio"
 )
 
 func DialWithDialer(dialer *rio.Dialer, network string, address string, config *tls.Config) (*tls.Conn, error) {

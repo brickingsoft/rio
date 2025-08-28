@@ -11,8 +11,8 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/brickingsoft/bytebuffers"
 	"github.com/brickingsoft/rio/pkg/liburing"
-	"github.com/brickingsoft/rio/pkg/liburing/aio/bytebuffer"
 	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
 )
 
@@ -35,9 +35,9 @@ func (adaptor *MultishotReceiveAdaptor) Handle(n int, flags uint32, err error) (
 		return true, n, flags, nil, nil
 	}
 
-	buf := bytebuffer.Acquire()
+	buf := bytebuffers.Acquire()
 	br.WriteTo(bid, n, buf)
-	return true, n, flags, unsafe.Pointer(buf), nil
+	return true, n, flags, unsafe.Pointer(&buf), nil
 }
 
 func (adaptor *MultishotReceiveAdaptor) HandleCompletionEvent(event CompletionEvent, b []byte, overflow io.Writer) (n int, interrupted bool, err error) {
@@ -49,13 +49,13 @@ func (adaptor *MultishotReceiveAdaptor) HandleCompletionEvent(event CompletionEv
 
 	// handle attachment
 	if attachment := event.Attachment; attachment != nil {
-		buf := (*bytebuffer.Buffer)(attachment)
+		buf := *(*bytebuffers.Buffer)(attachment)
 		n, _ = buf.Read(b)
 		if buf.Len() > 0 {
 			_, _ = buf.WriteTo(overflow)
 		}
 		event.Attachment = nil
-		bytebuffer.Release(buf)
+		bytebuffers.Release(buf)
 	}
 
 	// handle IORING_CQE_F_MORE is 0
@@ -92,7 +92,7 @@ func newMultishotReceiver(conn *Conn) (receiver *MultishotReceiver, err error) {
 		status:        recvMultishotReady,
 		locker:        sync.Mutex{},
 		operationLock: sync.Mutex{},
-		buffer:        bytebuffer.Acquire(),
+		buffer:        bytebuffers.Acquire(),
 		adaptor:       adaptor,
 		operation:     op,
 		future:        nil,
@@ -106,7 +106,7 @@ type MultishotReceiver struct {
 	locker        sync.Mutex
 	operationLock sync.Mutex
 	adaptor       *MultishotReceiveAdaptor
-	buffer        *bytebuffer.Buffer
+	buffer        bytebuffers.Buffer
 	operation     *Operation
 	future        Future
 	err           error
@@ -282,8 +282,8 @@ func (r *MultishotReceiver) Close() (err error) {
 }
 
 type Message struct {
-	B     *bytebuffer.Buffer
-	OOB   *bytebuffer.Buffer
+	B     bytebuffers.Buffer
+	OOB   bytebuffers.Buffer
 	Addr  syscall.Sockaddr
 	Flags int
 	Err   error
@@ -336,11 +336,11 @@ func releaseMessage(m *Message) {
 	}
 	if b := m.B; b != nil {
 		m.B = nil
-		bytebuffer.Release(b)
+		bytebuffers.Release(b)
 	}
 	if b := m.OOB; b != nil {
 		m.OOB = nil
-		bytebuffer.Release(b)
+		bytebuffers.Release(b)
 	}
 	m.Addr = nil
 	m.Flags = 0
@@ -433,7 +433,7 @@ func (adaptor *MultishotMsgReceiveAdaptor) Handle(n int, flags uint32, err error
 
 	// control
 	if cmsg := out.CmsgFirsthdr(msg); cmsg != nil {
-		message.OOB = bytebuffer.Acquire()
+		message.OOB = bytebuffers.Acquire()
 		_, _ = message.OOB.Write(b[:out.ControlLen])
 		// release bid
 		br.Advance(bid)
@@ -446,7 +446,7 @@ func (adaptor *MultishotMsgReceiveAdaptor) Handle(n int, flags uint32, err error
 	n = int(out.PayloadLength(n, msg))
 	if n > 0 {
 		payload := unsafe.Slice((*byte)(out.Payload(msg)), n)
-		message.B = bytebuffer.Acquire()
+		message.B = bytebuffers.Acquire()
 		_, _ = message.B.Write(payload)
 	}
 

@@ -540,6 +540,7 @@ func (poller *Poller) process1() {
 		waitTimeout  *syscall.Timespec
 		ring         = poller.ring
 		transmission = NewCurveTransmission(curve)
+		sqes         = make([]*liburing.SubmissionQueueEntry, 0, ring.SQEntries())
 		cqes         = make([]*liburing.CompletionQueueEvent, ring.CQEntries())
 	)
 
@@ -550,7 +551,7 @@ func (poller *Poller) process1() {
 	for {
 		// prepare
 		if poller.orphan != nil {
-			if !poller.prepareSQE(poller.orphan) {
+			if !poller.prepareSQE(poller.orphan, &sqes) {
 				goto SUBMIT
 			}
 			poller.orphan = nil
@@ -561,7 +562,7 @@ func (poller *Poller) process1() {
 				if op.kind == op_kind_register {
 					registerN++
 				}
-				if !poller.prepareSQE(op) {
+				if !poller.prepareSQE(op, &sqes) {
 					poller.orphan = op
 					break
 				}
@@ -582,6 +583,8 @@ func (poller *Poller) process1() {
 			waitNr, waitTimeout = transmission.Match(readyN + completed)
 		}
 		_, _ = ring.SubmitAndWaitTimeout(waitNr, waitTimeout, nil)
+		// reset sqes
+		sqes = sqes[:0]
 		// reset idle
 		poller.idle.CompareAndSwap(true, false)
 		// handle complete
@@ -608,36 +611,40 @@ func (poller *Poller) process2() {
 			readyN  uint32
 			orphan  *Operation
 			stopped bool
+			sqes    = make([]*liburing.SubmissionQueueEntry, 0, ring.SQEntries())
 		)
 		for {
 			// orphan
 			if orphan != nil {
-				if !poller.prepareSQE(orphan) {
+				if !poller.prepareSQE(orphan, &sqes) {
 					_, _ = ring.Submit()
 					continue
 				}
 				orphan = nil
 				_, _ = ring.Submit()
+				sqes = sqes[:0]
 			}
 			// ready
 			if readyN = uint32(len(ready)); readyN > 0 {
 				for i := uint32(0); i < readyN; i++ {
 					op := <-ready
-					if !poller.prepareSQE(op) {
+					if !poller.prepareSQE(op, &sqes) {
 						orphan = op
 						break
 					}
 				}
 				_, _ = ring.Submit()
+				sqes = sqes[:0]
 				continue
 			}
 			// wait
 			select {
 			case op := <-ready:
-				if !poller.prepareSQE(op) {
+				if !poller.prepareSQE(op, &sqes) {
 					orphan = op
 				}
 				_, _ = ring.Submit()
+				sqes = sqes[:0]
 				break
 			case <-done:
 				stopped = true
@@ -702,7 +709,7 @@ func (poller *Poller) handleRegister(op *Operation) bool {
 	return false
 }
 
-func (poller *Poller) prepareSQE(op *Operation) bool {
+func (poller *Poller) prepareSQE(op *Operation, sqes *[]*liburing.SubmissionQueueEntry) bool {
 	if poller.handleRegister(op) {
 		return true
 	}
@@ -711,6 +718,7 @@ func (poller *Poller) prepareSQE(op *Operation) bool {
 	if sqe == nil {
 		return false
 	}
+	*sqes = append(*sqes, sqe)
 	op.personality = poller.personality
 	// prepare timeout timeout
 	if op.timeout != nil {
@@ -719,10 +727,12 @@ func (poller *Poller) prepareSQE(op *Operation) bool {
 			sqe.PrepareNop()
 			return false
 		}
+		*sqes = append(*sqes, timeoutSQE)
 		// packing
 		if err := op.packingSQE(sqe); err != nil {
 			op.channel.Complete(0, 0, err)
 			sqe.PrepareNop()
+			timeoutSQE.PrepareNop()
 			return true
 		}
 		op.timeout.personality = poller.personality
@@ -730,6 +740,7 @@ func (poller *Poller) prepareSQE(op *Operation) bool {
 		if err := op.timeout.packingSQE(timeoutSQE); err != nil {
 			op.channel.Complete(0, 0, err)
 			sqe.PrepareNop()
+			timeoutSQE.PrepareNop()
 			return true
 		}
 		return true

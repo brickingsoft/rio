@@ -1,5 +1,5 @@
-github.com/brickingsoft/bytebuffers v1.3.0 h1:HGJ83Gi0HZRD1P+l8Dtbxf2xK+seOSBvlYpfXzHxiiU=
-github.com/brickingsoft/bytebuffers v1.3.0/go.mod h1:0h9j1idziUMgN/PFI1b/UGmZsJTr7JlaK1BAgJPcLrY=
+github.com/brickingsoft/bytebuffers v1.4.1 h1:MunZzEuCmV0snpjt+Cg+2eQpwq0ZNuYe0/wEbPEeqog=
+github.com/brickingsoft/bytebuffers v1.4.1/go.mod h1:0h9j1idziUMgN/PFI1b/UGmZsJTr7JlaK1BAgJPcLrY=
 golang.org/x/net v0.43.0 h1:lat02VYK2j4aLzMzecihNvTlJNQUq316m2Mr9rnM6YE=
 golang.org/x/net v0.43.0/go.mod h1:vhO1fvI4dGsIjh73sWfUVjj3N7CA9WkKJNQm2svM6Jg=
 golang.org/x/sys v0.35.0 h1:vz1N37gP5bs89s7He8XuIYXpyY0+QlsKmzipCbUtyxI=

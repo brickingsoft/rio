@@ -35,7 +35,7 @@ func (adaptor *MultishotReceiveAdaptor) Handle(n int, flags uint32, err error) (
 		return true, n, flags, nil, nil
 	}
 
-	buf := bytebuffers.AcquirePageSize()
+	buf := bytebuffers.Acquire()
 	br.WriteTo(bid, n, buf)
 	return true, n, flags, unsafe.Pointer(&buf), nil
 }
@@ -55,7 +55,7 @@ func (adaptor *MultishotReceiveAdaptor) HandleCompletionEvent(event CompletionEv
 			_, _ = buf.WriteTo(overflow)
 		}
 		event.Attachment = nil
-		bytebuffers.ReleasePageSize(buf)
+		bytebuffers.Release(buf)
 	}
 
 	// handle IORING_CQE_F_MORE is 0
@@ -92,7 +92,7 @@ func newMultishotReceiver(conn *Conn) (receiver *MultishotReceiver, err error) {
 		status:        recvMultishotReady,
 		locker:        sync.Mutex{},
 		operationLock: sync.Mutex{},
-		buffer:        bytebuffers.AcquirePageSize(),
+		buffer:        bytebuffers.Acquire(),
 		adaptor:       adaptor,
 		operation:     op,
 		future:        nil,
@@ -237,7 +237,7 @@ func (r *MultishotReceiver) releaseRuntime() {
 func (r *MultishotReceiver) releaseBuffer() {
 	if buffer := r.buffer; buffer != nil {
 		r.buffer = nil
-		bytebuffers.ReleasePageSize(buffer)
+		bytebuffers.Release(buffer)
 	}
 }
 
@@ -336,7 +336,7 @@ func releaseMessage(m *Message) {
 	}
 	if b := m.B; b != nil {
 		m.B = nil
-		bytebuffers.ReleasePageSize(b)
+		bytebuffers.Release(b)
 	}
 	if b := m.OOB; b != nil {
 		m.OOB = nil
@@ -446,7 +446,7 @@ func (adaptor *MultishotMsgReceiveAdaptor) Handle(n int, flags uint32, err error
 	n = int(out.PayloadLength(n, msg))
 	if n > 0 {
 		payload := unsafe.Slice((*byte)(out.Payload(msg)), n)
-		message.B = bytebuffers.AcquirePageSize()
+		message.B = bytebuffers.Acquire()
 		_, _ = message.B.Write(payload)
 	}
 

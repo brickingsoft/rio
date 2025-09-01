@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"net"
+	"os"
 	"sync"
 	"syscall"
 	"time"
@@ -14,6 +15,10 @@ import (
 	"github.com/brickingsoft/bytebuffers"
 	"github.com/brickingsoft/rio/pkg/liburing"
 	"github.com/brickingsoft/rio/pkg/liburing/aio/sys"
+)
+
+var (
+	pageSizeBufferPool = bytebuffers.Pool(os.Getpagesize())
 )
 
 type MultishotReceiveAdaptor struct {
@@ -92,7 +97,7 @@ func newMultishotReceiver(conn *Conn) (receiver *MultishotReceiver, err error) {
 		status:        recvMultishotReady,
 		locker:        sync.Mutex{},
 		operationLock: sync.Mutex{},
-		buffer:        bytebuffers.Acquire(),
+		buffer:        pageSizeBufferPool.Acquire(),
 		adaptor:       adaptor,
 		operation:     op,
 		future:        nil,
@@ -237,7 +242,7 @@ func (r *MultishotReceiver) releaseRuntime() {
 func (r *MultishotReceiver) releaseBuffer() {
 	if buffer := r.buffer; buffer != nil {
 		r.buffer = nil
-		bytebuffers.Release(buffer)
+		pageSizeBufferPool.Release(buffer)
 	}
 }
 
